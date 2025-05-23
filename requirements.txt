@@ -5,4 +5,4 @@ sentence-transformers
 faiss-cpu
 tzlocal
 numpy<2.0.0
-requests 
+requests

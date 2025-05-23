@@ -36,6 +36,9 @@ notes/
 faiss_index/
 *.faiss
 
+# Users data
+data/*
+
 # OS specific
 .DS_Store
 Thumbs.db 

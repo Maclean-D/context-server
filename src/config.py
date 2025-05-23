@@ -19,12 +19,14 @@ DEFAULT_CONFIG = {
     "n_candidates": 10,
     "n_results": 5,
     "port": 5712,                      # uncommon port
-    "faiss_dir": "./faiss_index"       # directory to save/load FAISS index
+    "faiss_dir": "./faiss_index",      # directory to save/load FAISS index
+    "limitless_api_key": None,         # API key for Limitless, can be set by env var
+    "sync_interval_minutes": 30        # Default sync interval
 }
 
-def ensure_directory_structure():
-    """Ensure the year/month directory structure exists for the current year."""
-    base_dir = DEFAULT_CONFIG["docs_dir"]
+def ensure_directory_structure(cfg):
+    """Ensure the year/month directory structure exists based on config."""
+    base_dir = cfg["docs_dir"]
     current_year = str(datetime.now().year)
     current_month = datetime.now().strftime("%B")  # Full month name
     
@@ -39,7 +41,7 @@ def ensure_directory_structure():
     month_dir = os.path.join(year_dir, current_month)
     os.makedirs(month_dir, exist_ok=True)
     
-    return base_dir
+    return base_dir # Return base_dir which is now absolute or relative as per config
 
 def load_config():
     config = DEFAULT_CONFIG.copy()
@@ -50,6 +52,11 @@ def load_config():
                 config.update(user_conf)
         except Exception as e:
             print(f"Warning: could not load config.json ({e}), using defaults.")
+
+    # Override API key with environment variable if set
+    env_api_key = os.getenv("LIMITLESS_API_KEY")
+    if env_api_key:
+        config["limitless_api_key"] = env_api_key
 
     if not config.get("timezone"):
         try:
@@ -62,6 +69,9 @@ def load_config():
 
     try:
         with open(CONFIG_PATH, 'w') as f:
+            # Avoid writing the API key to config.json if it came from env var and wasn't in original file
+            # Or, always write current config state. For simplicity, write current state.
+            # User can manage config.json manually or via API. Env var takes precedence on load.
             json.dump(config, f, indent=2)
     except Exception as e:
         print(f"Could not write config file: {e}")
@@ -73,10 +83,11 @@ def load_config():
         TZ = ZoneInfo("UTC")
         config["timezone"] = "UTC"
 
-    # Ensure directory structure exists
-    config["docs_dir"] = ensure_directory_structure()
+    # Ensure directory structure exists using potentially updated config paths
+    # ensure_directory_structure now takes config as an argument
+    config["docs_dir"] = ensure_directory_structure(config)
     os.makedirs(config["faiss_dir"], exist_ok=True)
 
     return config, TZ
 
-config, TZ = load_config() 
+config, TZ = load_config()

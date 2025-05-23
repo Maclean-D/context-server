@@ -1,0 +1,17 @@
+services:
+  context-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5712:5712"
+    volumes:
+      - ./data/notes:/app/notes
+      - ./data/faiss_index:/app/faiss_index
+      - ./data/config.json:/app/config.json
+    environment:
+      # Set your Limitless API key here or leave empty if you want to use the one in config.json
+      # If set, this will override the value in config.json
+      LIMITLESS_API_KEY: '' # Replace with your Limitless API key
+      UVICORN_RELOAD: false # Disable Uvicorn's auto-reload in Docker
+    restart: unless-stopped

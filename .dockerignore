@@ -1,0 +1,36 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.env
+.git/
+.gitignore
+*.md
+# Docker specific files (these are not needed inside the image)
+# Dockerfile
+# docker-compose.yml
+# .dockerignore # Itself
+
+# IDE specific
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Test files if not needed in production image
+tests/
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# Build artifacts (if any from other processes)
+dist/
+build/
+*.egg-info/
