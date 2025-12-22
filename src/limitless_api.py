@@ -77,6 +77,55 @@ class LimitlessAPI:
 
         return all_lifelogs
 
+def get_conversation_timestamp(conversation: dict) -> str:
+    """
+    Extract timestamp from a conversation object, handling multiple field variations.
+    
+    Checks for timestamp in multiple possible fields:
+    - timestamp
+    - time
+    - recorded_at
+    - recordedAt
+    - metadata.timestamp
+    - startTime
+    - start_time
+    - createdAt
+    - created_at
+    
+    Returns formatted timestamp string or empty string if not found.
+    """
+    timestamp_fields = [
+        "timestamp",
+        "time", 
+        "recorded_at",
+        "recordedAt",
+        "startTime",
+        "start_time",
+        "createdAt",
+        "created_at"
+    ]
+    
+    # Check direct fields
+    for field in timestamp_fields:
+        if conversation.get(field):
+            try:
+                dt = datetime.fromisoformat(conversation[field])
+                return dt.strftime("(%m/%d/%y %I:%M %p)")
+            except (ValueError, TypeError) as e:
+                logger.debug(f"Failed to parse timestamp from field '{field}': {e}")
+                continue
+    
+    # Check metadata.timestamp
+    if conversation.get("metadata") and isinstance(conversation["metadata"], dict):
+        if conversation["metadata"].get("timestamp"):
+            try:
+                dt = datetime.fromisoformat(conversation["metadata"]["timestamp"])
+                return dt.strftime("(%m/%d/%y %I:%M %p)")
+            except (ValueError, TypeError) as e:
+                logger.debug(f"Failed to parse timestamp from metadata.timestamp: {e}")
+    
+    return ""
+
 def format_lifelog_markdown(lifelog: dict) -> str:
     """Convert a lifelog entry to our markdown format."""
     content = []
@@ -111,10 +160,7 @@ def format_lifelog_markdown(lifelog: dict) -> str:
             # Handle messages/blockquotes
             if node["type"] == "blockquote":
                 speaker = node.get("speakerName", "Speaker")
-                timestamp = ""
-                if node.get("startTime"):
-                    dt = datetime.fromisoformat(node["startTime"])
-                    timestamp = dt.strftime("(%m/%d/%y %I:%M %p)")
+                timestamp = get_conversation_timestamp(node)
                 
                 message = f"- {speaker} {timestamp}: {node['content']}"
                 if current_section:
@@ -142,10 +188,7 @@ def format_content_node(node: dict, level: int = 1) -> list:
         lines.append(f"{'#' * heading_level} {node['content']}")
     elif node["type"] == "blockquote":
         speaker = node.get("speakerName", "Speaker")
-        timestamp = ""
-        if node.get("startTime"):
-            dt = datetime.fromisoformat(node["startTime"])
-            timestamp = dt.strftime("(%m/%d/%y %I:%M %p)")
+        timestamp = get_conversation_timestamp(node)
         
         lines.append(f"- {speaker} {timestamp}: {node['content']}")
     else:
@@ -212,6 +255,23 @@ def sync_lifelogs(api_key: str = None, force_start_date: datetime = None):
         
         logger.info(f"Fetching lifelogs for {current_date.strftime('%Y-%m-%d')}")
         logs = api.get_lifelogs(current_date)
+        
+        # Debug logging: Show structure of conversations returned from API
+        if logs:
+            logger.debug(f"Received {len(logs)} conversations from API")
+            for idx, log in enumerate(logs):
+                logger.debug(f"Conversation {idx + 1} available fields: {list(log.keys())}")
+                # Log specific timestamp-related fields if present
+                timestamp_info = []
+                for field in ["timestamp", "time", "recorded_at", "recordedAt", "startTime", "start_time", "createdAt", "created_at"]:
+                    if field in log:
+                        timestamp_info.append(f"{field}={log[field]}")
+                if log.get("metadata") and isinstance(log["metadata"], dict):
+                    if "timestamp" in log["metadata"]:
+                        timestamp_info.append(f"metadata.timestamp={log['metadata']['timestamp']}")
+                if timestamp_info:
+                    logger.debug(f"Conversation {idx + 1} timestamp fields: {', '.join(timestamp_info)}")
+        
         if logs:
             content = []
             for log in logs:
@@ -227,4 +287,4 @@ def sync_lifelogs(api_key: str = None, force_start_date: datetime = None):
         else:
             logger.debug(f"No entries found for {current_date.strftime('%Y-%m-%d')}")
         
-        current_date += timedelta(days=1) 
+        current_date += timedelta(days=1)
