@@ -200,7 +200,13 @@ Once your server is started visit http://localhost:5712/docs#/ to view documenta
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Maclean-D/context-server&type=Date)](https://star-history.com/#Maclean-D/context-server&Date)
+<a href="https://www.star-history.com/?repos=Maclean-D%2Fcontext-server&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=Maclean-D/context-server&type=date&theme=dark&legend=top-left&sealed_token=gql82-UXqkjeGpAk60zQ_hLX7UCAbt-4WQr_nH3R0h2WZYTYsSoABjbFp1TwhpO3ppOGG7R1AW1lbjBJyzy_qvUFCStgVXQbAil9_iSto42D8ebGscwW9I2KdToCfnUKfDxX7vwHFQl72HhyfRXnqoWShs3hikpC6nSTAt5p50aEFBkuIhMO8bZl3VJj" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=Maclean-D/context-server&type=date&legend=top-left&sealed_token=gql82-UXqkjeGpAk60zQ_hLX7UCAbt-4WQr_nH3R0h2WZYTYsSoABjbFp1TwhpO3ppOGG7R1AW1lbjBJyzy_qvUFCStgVXQbAil9_iSto42D8ebGscwW9I2KdToCfnUKfDxX7vwHFQl72HhyfRXnqoWShs3hikpC6nSTAt5p50aEFBkuIhMO8bZl3VJj" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=Maclean-D/context-server&type=date&legend=top-left&sealed_token=gql82-UXqkjeGpAk60zQ_hLX7UCAbt-4WQr_nH3R0h2WZYTYsSoABjbFp1TwhpO3ppOGG7R1AW1lbjBJyzy_qvUFCStgVXQbAil9_iSto42D8ebGscwW9I2KdToCfnUKfDxX7vwHFQl72HhyfRXnqoWShs3hikpC6nSTAt5p50aEFBkuIhMO8bZl3VJj" />
+ </picture>
+</a>
 
 ## Contributors
 
